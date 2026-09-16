@@ -2,7 +2,7 @@
 
 Aplicativo Flutter acadêmico que apresenta um catálogo interativo de personagens de **Rick and Morty**. O projeto consome a [Rick and Morty API](https://rickandmortyapi.com/documentation) e implementa os requisitos RF01–RF10 da atividade somativa de Desenvolvimento Mobile Híbrido.
 
-**Integrantes:** Caetano Padoin, Davi Henrique e Matheus Brehm.
+**Integrantes:** Caetano Padoin, Davi Henrique, Matheus Brehm e Rafael Gabardo.
 
 ## Funcionalidades
 
