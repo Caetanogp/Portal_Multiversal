@@ -64,7 +64,9 @@ class FakeCharacterRepository implements CharacterRepository {
   final List<Character> searchResults;
   final Character detail;
   final AppException? failure;
+  Future<void>? pageDelay;
   int detailCalls = 0;
+  int pageCalls = 0;
 
   @override
   Future<Character> getById(int id) async {
@@ -75,6 +77,8 @@ class FakeCharacterRepository implements CharacterRepository {
 
   @override
   Future<CharacterPage> getPage(int page) async {
+    pageCalls++;
+    if (pageDelay != null) await pageDelay;
     if (failure != null) throw failure!;
     return pages?[page] ??
         CharacterPage(

@@ -103,6 +103,39 @@ class _CatalogScreenState extends State<CatalogScreen> {
             },
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Consumer<CatalogProvider>(
+              builder: (BuildContext context, CatalogProvider state, _) {
+                final bool isLoading = state.status == CatalogStatus.loading;
+                final String actionLabel = isLoading
+                    ? 'Atualizando catálogo'
+                    : 'Atualizar catálogo';
+                return Semantics(
+                  button: true,
+                  label: actionLabel,
+                  liveRegion: isLoading,
+                  child: IconButton(
+                    key: const ValueKey<String>('refresh-catalog-button'),
+                    tooltip: actionLabel,
+                    onPressed: isLoading
+                        ? null
+                        : () => state.loadInitial(force: true),
+                    icon: isLoading
+                        ? const SizedBox.square(
+                            key: ValueKey<String>('refresh-catalog-progress'),
+                            dimension: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.refresh),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
         Expanded(
           child: Consumer<CatalogProvider>(
             builder: (BuildContext context, CatalogProvider state, _) {

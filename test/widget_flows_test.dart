@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -84,6 +86,60 @@ void main() {
 
     expect(find.text('Detalhes do personagem'), findsOneWidget);
     expect(repository.detailCalls, 1);
+  });
+
+  testWidgets('botão atualiza o catálogo usando o Provider', (
+    WidgetTester tester,
+  ) async {
+    final FakeCharacterRepository repository = FakeCharacterRepository();
+    final CatalogProvider catalog = CatalogProvider(repository);
+    await catalog.loadInitial();
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          Provider<CharacterRepository>.value(value: repository),
+          ChangeNotifierProvider<CatalogProvider>.value(value: catalog),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.dark,
+          home: const Scaffold(body: CatalogScreen()),
+        ),
+      ),
+    );
+
+    expect(repository.pageCalls, 1);
+    expect(
+      find.byKey(const ValueKey<String>('refresh-catalog-button')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('Atualizar catálogo'), findsOneWidget);
+    final Completer<void> refreshCompleter = Completer<void>();
+    repository.pageDelay = refreshCompleter.future;
+
+    await tester.tap(
+      find.byKey(const ValueKey<String>('refresh-catalog-button')),
+    );
+    await tester.pump();
+
+    expect(
+      find.byKey(const ValueKey<String>('refresh-catalog-progress')),
+      findsOneWidget,
+    );
+    expect(find.byTooltip('Atualizando catálogo'), findsOneWidget);
+    expect(
+      tester
+          .widget<IconButton>(
+            find.byKey(const ValueKey<String>('refresh-catalog-button')),
+          )
+          .onPressed,
+      isNull,
+    );
+
+    refreshCompleter.complete();
+    await tester.pumpAndSettle();
+
+    expect(repository.pageCalls, 2);
   });
 
   testWidgets(
